@@ -1,61 +1,36 @@
-var path = require('path')
-var webpack = require('webpack')
+const webpack = require('webpack');
+const nodeEnv = process.env.NODE_ENV || 'production';
 
 module.exports = {
-  entry: './src/main.js',
-  output: {
-    path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/',
-    filename: 'build.js'
+  devtool: 'source-map',
+  entry: {
+    filename: './app.js'
   },
-  resolveLoader: {
-    root: path.join(__dirname, 'node_modules'),
+  output: {
+    filename: '_build/bundle.js'
   },
   module: {
     loaders: [
       {
-        test: /\.vue$/,
-        loader: 'vue'
-      },
-      {
         test: /\.js$/,
+        exclude: /node_modules/,
         loader: 'babel',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file',
         query: {
-          name: '[name].[ext]?[hash]'
+          presets: ['es2015-native-modules']
         }
-      },
-      {
-        test: /\.md/,
-        loader: 'vue-markdown-loader'
       }
     ]
   },
-  devServer: {
-    historyApiFallback: true,
-    noInfo: true
-  },
-  devtool: '#eval-source-map'
-}
-
-if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = '#source-map'
-  // http://vue-loader.vuejs.org/en/workflow/production.html
-  module.exports.plugins = (module.exports.plugins || []).concat([
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
-    }),
+  plugins: [
+    // uglify js
     new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
+      compress: { warnings: false },
+      output: { comments: false },
+      sourceMap: true
     }),
-    new webpack.optimize.OccurenceOrderPlugin()
-  ])
+    // env plugin
+    new webpack.DefinePlugin({
+      'proccess.env': { NODE_ENV: JSON.stringify(nodeEnv)}
+    })
+  ]
 }

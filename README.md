@@ -1,2 +1,3 @@
-# simpleJSboilerplate
-webpack2 - es6
+# alexsinfaorsa.me
+
+> my personal website
